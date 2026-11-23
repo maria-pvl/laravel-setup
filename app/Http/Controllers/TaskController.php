@@ -6,6 +6,7 @@ use App\Models\Task;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Http\Resources\TaskResource;
+use App\Events\TaskCreated;
 
 class TaskController extends Controller
 {
@@ -21,6 +22,8 @@ class TaskController extends Controller
     public function store(StoreTaskRequest $request)
     {
         $task = Task::create($request->validated());
+
+        TaskCreated::dispatch($task);
 
         return new TaskResource($task->load(['project', 'comments']));
     }
